@@ -17,6 +17,9 @@ public class CustomView extends View {
     private int p;
     private boolean visible;
 
+    private Paint paint;
+    private Path path;
+
     // constructor
     public CustomView(Context context) {
         super(context);
@@ -25,6 +28,9 @@ public class CustomView extends View {
         p = 0;
 
         visible = false;
+
+        paint = new Paint();
+        path = new Path();
     }
 
     // render screen
@@ -34,18 +40,17 @@ public class CustomView extends View {
 
         if(!visible) return;
 
-        Paint paint = new Paint();
-        Path path = new Path();
-
         // save current matrix
         canvas.save();
 
+        // smooth edge
         paint.setAntiAlias(true);
 
         // draw circle
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(20.0f);
+        path.rewind();
         path.arcTo(left, top, right, bottom, 270.0f, a, true);
         canvas.drawPath(path, paint);
 
@@ -80,7 +85,7 @@ public class CustomView extends View {
         y+=37.5f;
     }
 
-    // animated circle
+    // animate circle
     public void update(int i){
 
         p = i;
@@ -97,6 +102,8 @@ public class CustomView extends View {
 
     // show circle
     public void show(){
+        p = 0;
+        a = 0.0f;
         visible = true;
         invalidate();
     }

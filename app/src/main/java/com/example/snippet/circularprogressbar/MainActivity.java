@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
 
     private CustomView view;
     private MyTask mytask;
+    private boolean en;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,8 @@ public class MainActivity extends Activity {
         view = new CustomView(getApplicationContext());
         setContentView(view);
 
+        // enable start menu
+        en = true;
     }
 
     // create menu
@@ -49,6 +52,16 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    // enable/disable menu
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        menu.findItem(R.id.menu_start).setEnabled(en);
+        menu.findItem(R.id.menu_stop).setEnabled(!en);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     // start thread
     private void onMenuStartThread(){
         mytask = new MyTask(getApplicationContext());
@@ -70,16 +83,22 @@ public class MainActivity extends Activity {
             this.context = context;
         }
 
-        // before
+        // before animatiion
         @Override
         protected void onPreExecute() {
             view.show();
         }
 
-        // after
+        // after animation
         @Override
         protected void onPostExecute(String s) {
             view.hide();
+            Toast.makeText(context, s , Toast.LENGTH_SHORT).show();
+        }
+
+        // after cancel animation
+        @Override
+        protected void onCancelled(String s) {
             Toast.makeText(context, s , Toast.LENGTH_SHORT).show();
         }
 
@@ -89,12 +108,15 @@ public class MainActivity extends Activity {
             view.update(values[0]);
         }
 
-        // in progress
+        // do animation
         @Override
         protected String doInBackground(Void... voids) {
 
             int i;
             String str;
+
+            // enable stop menu
+            en = false;
 
             str = "GAME OVER";
 
@@ -113,6 +135,9 @@ public class MainActivity extends Activity {
                 // call onProgressUpdate
                 publishProgress(i);
             }
+
+            // enable start menu
+            en = true;
 
             return str;
         }
